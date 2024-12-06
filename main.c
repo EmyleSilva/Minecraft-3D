@@ -6,12 +6,19 @@
 #include "stb_image.h"
 
 int largura = 1024, altura = 1024;
-float a[3] = {6.0, 4.0, 4.0};
+float a[3] = {-6.0, 4.0, 4.0};
 
-GLint tex_id[2];
+GLint tex_id[2]; //Armazena os IDs de textura
 
+/**
+ * @brief Carrega uma textura
+ * 
+ * @param path Caminho para a textura
+ * @param texId Id da textura
+ */
 void load(const char *path, int texId)
 {
+    //Carrega a textura
     int largura, altura, canal;
     unsigned char *data = stbi_load(path, &largura, &altura, &canal, 0);
 
@@ -21,20 +28,22 @@ void load(const char *path, int texId)
         exit(1);
     }
 
-    glBindTexture(GL_TEXTURE_2D, tex_id[texId]);
+    glBindTexture(GL_TEXTURE_2D, tex_id[texId]); //Associa o ID ao tipo de textura 2D 
 
+    //Envia a textura para o openGL (fica armazenada)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, largura, altura, 0, canal == 4? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
-
+    //Configura os parâmetros da textura (para ajustar corretamente ao cubo)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+    //Libera a imagem
     stbi_image_free(data);
 }
 
 void Iniciar() {
-    glGenTextures(3, tex_id);
+    glGenTextures(3, tex_id); //Gera identificadores para as texturas 
+    //Carrega as texturas
     load("img/pedra.jpeg", 0);
     load("img/madeira.jpg", 1);
     load("img/madeira(lados).png", 2);
@@ -49,10 +58,13 @@ void Iniciar() {
 
 void desenha_cubo(int id)
 {   
+    //Habilita o uso de texturas
     glEnable(GL_TEXTURE_2D);
+    //Vincula a textura
     glBindTexture(GL_TEXTURE_2D, tex_id[id]);
 
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE); //Define como a cor e a textura se comportam (nesse caso, usa replace para usar somente a textura e descartar a cor)
+     //Define como a cor e a textura se comportam (nesse caso, usa replace para usar somente a textura e descartar a cor)
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
     //glColor3f(0.0f,0.0f,0.6f); 
     glBegin( GL_QUADS ); //Face y-z, com x = 0.0
@@ -100,8 +112,8 @@ void desenha_cubo(int id)
         glTexCoord2f(0.0f, 1.0f); glVertex3f(0.2f,0.2f,0.0f); //Superior esquerdo
     glEnd();
 
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0); //Desabilita o uso de texturas em outros objetos
+    glDisable(GL_TEXTURE_2D); 
 }
 
 void display()
