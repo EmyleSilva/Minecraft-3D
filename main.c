@@ -5,10 +5,14 @@
 #define STB_IMAGE_IMPLEMENTATION //Usado para importar as imagens de textura
 #include "stb_image.h"
 
-int largura = 1024, altura = 1024;
-float a[3] = {-6.0, 4.0, 4.0};
+#define EIXO_X 0
+#define EIXO_Y 1
+#define EIXO_Z 2
 
-GLint tex_id[2]; //Armazena os IDs de textura
+int largura = 1024, altura = 1024;
+float a[3] = {6.0, 4.0, 4.0};
+
+GLint tex_id[3]; //Armazena os IDs de textura
 
 /**
  * @brief Carrega uma textura
@@ -53,10 +57,10 @@ void Iniciar() {
     gluLookAt(a[0], a[1], a[2], 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(10.0,largura/altura,1.0,20.0);
+    gluPerspective(20.0,largura/altura,1.0,20.0);
 }
 
-void desenha_cubo(int id)
+/*void desenha_cubo(int id)
 {   
     //Habilita o uso de texturas
     glEnable(GL_TEXTURE_2D);
@@ -114,6 +118,105 @@ void desenha_cubo(int id)
 
     glBindTexture(GL_TEXTURE_2D, 0); //Desabilita o uso de texturas em outros objetos
     glDisable(GL_TEXTURE_2D); 
+}*/
+
+void desenha_cubo(int id)
+{   
+    // Habilita o uso de texturas
+    glEnable(GL_TEXTURE_2D);
+    // Vincula a textura
+    glBindTexture(GL_TEXTURE_2D, tex_id[id]);
+
+    // Define como a cor e a textura se comportam
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+    // Face y-z, com x = -0.1
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.1f, -0.1f, -0.1f); // Inferior esquerdo
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.1f, -0.1f,  0.1f); // Inferior direito
+        glTexCoord2f(1.0f, 1.0f); glVertex3f(-0.1f,  0.1f,  0.1f); // Superior direito
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.1f,  0.1f, -0.1f); // Superior esquerdo
+    glEnd();
+
+    // Face x-z, com y = -0.1
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.1f, -0.1f, -0.1f); // Inferior esquerdo
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.1f, -0.1f,  0.1f); // Inferior direito
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.1f, -0.1f,  0.1f); // Superior direito
+        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.1f, -0.1f, -0.1f); // Superior esquerdo
+    glEnd();
+
+    // Face x-z, com y = 0.1
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.1f,  0.1f, -0.1f); // Inferior esquerdo
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(-0.1f,  0.1f,  0.1f); // Inferior direito
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.1f,  0.1f,  0.1f); // Superior direito
+        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.1f,  0.1f, -0.1f); // Superior esquerdo
+    glEnd();
+
+    // Face y-x, com z = 0.1
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.1f, -0.1f,  0.1f); // Inferior esquerdo
+        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.1f, -0.1f,  0.1f); // Inferior direito
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.1f,  0.1f,  0.1f); // Superior direito
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.1f,  0.1f,  0.1f); // Superior esquerdo
+    glEnd();
+
+    // Face y-x, com z = -0.1
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.1f, -0.1f, -0.1f); // Inferior esquerdo
+        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.1f, -0.1f, -0.1f); // Inferior direito
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.1f,  0.1f, -0.1f); // Superior direito
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.1f,  0.1f, -0.1f); // Superior esquerdo
+    glEnd();
+
+    // Face y-z, com x = 0.1
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0.0f, 0.0f); glVertex3f( 0.1f, -0.1f, -0.1f); // Inferior esquerdo
+        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.1f, -0.1f,  0.1f); // Inferior direito
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.1f,  0.1f,  0.1f); // Superior direito
+        glTexCoord2f(0.0f, 1.0f); glVertex3f( 0.1f,  0.1f, -0.1f); // Superior esquerdo
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0); // Desabilita o uso de texturas em outros objetos
+    glDisable(GL_TEXTURE_2D); 
+}
+
+void transform(int texID, float x, float y, float z)
+{
+    glPushMatrix(); 
+        glTranslatef(x, y, z); 
+        desenha_cubo(texID); 
+    glPopMatrix(); 
+}
+
+void desenha_cubos_enfileirados(int quantidade, float distancia, int texID, int EIXO)
+{
+    if (EIXO == EIXO_X){
+        float z = 0.0f, y = 0.0f;
+        for (int i = 0; i < quantidade; i++)
+        {
+            transform(texID, (float)i*distancia, y, z);
+            z-=distancia;
+            y-=distancia;
+        }
+    }else if (EIXO == EIXO_Y){
+        float x = 0.0f, z = 0.0f;
+        for (int i = 0; i < quantidade; i++)
+        {
+            transform(texID, x, (float)i*distancia, z);
+            z-=distancia;
+            x-=distancia;
+        }
+    }else {
+        float x = 0.0f, y = 0.0f;
+        for (int i = 0; i < quantidade; i++)
+        {
+            transform(texID, x, y, (float)i*distancia);
+            x-=distancia;
+            y-=distancia;
+        }
+    }
 }
 
 void display()
@@ -135,7 +238,9 @@ void display()
     glEnd();
     
     desenha_cubo(1);
-   
+    
+    // desenha_cubos_enfileirados(5, 0.15f, 2, EIXO_X);
+    // desenha_cubos_enfileirados(5, 0.15f, 2, EIXO_Z);
     glFlush();
 }
 
