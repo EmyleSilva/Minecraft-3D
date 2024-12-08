@@ -5,13 +5,15 @@
 #define STB_IMAGE_IMPLEMENTATION //Usado para importar as imagens de textura
 #include "stb_image.h"
 
-#define EIXO_X 0
-#define EIXO_Y 1
-#define EIXO_Z 2
+#define false 0
+#define true 1
+#define EIXO_X 2
+#define EIXO_Y 3
+#define EIXO_Z 4
 
 int largura = 1024, altura = 1024;
-float a[3] = {0.0, 0.0, 6.0};
-GLint tex_id[4]; //Armazena os IDs de textura
+float a[3] = {2.0, 2.0, 6.0};
+GLint tex_id[5]; //Armazena os IDs de textura
 
 /**
  * @brief Carrega uma textura
@@ -51,6 +53,7 @@ void Iniciar() {
     load("img/madeira.jpg", 1);
     load("img/madeira(lados).png", 2);
     load("img/vidro.png", 3);
+    load("img/folha.png", 4);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -153,7 +156,6 @@ void escada(int texID, float x, float y, float z){
     glPopMatrix();  // Restaura a transformação anterior
 }
 
-
 void desenha_cubos_enfileirados(int quantidade, float x, float y, float z, float distancia, int texID, int EIXO)
 {
     if (EIXO == EIXO_X){
@@ -172,6 +174,73 @@ void desenha_cubos_enfileirados(int quantidade, float x, float y, float z, float
             transform(texID, x, y, z + (float)i*distancia);
         }
     }
+}
+
+void desenha_parede(float x, float y, float z, int comPorta)
+{
+    if (!comPorta){
+        desenha_cubos_enfileirados(8, x    , y    , z, 0.2, 0, EIXO_X); //Primeira fileira: pedra
+        desenha_cubos_enfileirados(8, x    , y+0.2, z, 0.2, 0, EIXO_X); //Segunda fileira: pedra
+        desenha_cubos_enfileirados(2, x    , y+0.4, z, 0.2, 2, EIXO_X); //Terceira fileira (esquerda): madeira
+        desenha_cubos_enfileirados(4, x+0.4, y+0.4, z, 0.2, 3, EIXO_X); //Terceira fileira (centro): vidro
+        desenha_cubos_enfileirados(2, x+1.2, y+0.4, z, 0.2, 2, EIXO_X); //Terceiro fileira (direita): madeira 
+        desenha_cubos_enfileirados(2, x    , y+0.6, z, 0.2, 2, EIXO_X); //Quarta fileira (esquerda): madeira
+        desenha_cubos_enfileirados(4, x+0.4, y+0.6, z, 0.2, 3, EIXO_X); //Quarta fileira (centro): vidro
+        desenha_cubos_enfileirados(2, x+1.2, y+0.6, z, 0.2, 2, EIXO_X); //Quarta fileira (direita): madeira 
+        desenha_cubos_enfileirados(8, x    , y+0.8, z, 0.2, 0, EIXO_X); //Quinta fileira: pedra
+    }else {
+        desenha_cubos_enfileirados(8, x    , y    , z, 0.2, 0, EIXO_X); //Primeira fileira: pedra
+        desenha_cubos_enfileirados(3, x    , y+0.2, z, 0.2, 0, EIXO_X); //Segunda fileira (esquerda): pedra
+        desenha_cubos_enfileirados(3, x+1.0, y+0.2, z, 0.2, 0, EIXO_X); //Segunda fileira (direita): pedra
+
+        desenha_cubos_enfileirados(3, x    , y+0.4, z, 0.2, 2, EIXO_X); //Segunda fileira (esquerda): pedra
+        desenha_cubos_enfileirados(3, x+1.0, y+0.4, z, 0.2, 2, EIXO_X); //Segunda fileira (direita): pedra
+
+        desenha_cubos_enfileirados(2, x    , y+0.6, z, 0.2, 2, EIXO_X); //Quarta fileira (esquerda): madeira
+        desenha_cubos_enfileirados(4, x+0.4, y+0.6, z, 0.2, 3, EIXO_X); //Quarta fileira (centro): vidro
+        desenha_cubos_enfileirados(2, x+1.2, y+0.6, z, 0.2, 2, EIXO_X); //Quarta fileira (direita): madeira 
+        desenha_cubos_enfileirados(8, x    , y+0.8, z, 0.2, 0, EIXO_X); //Quinta fileira: pedra
+    }
+}
+
+void desenha_chao(int texID)
+{
+    for (int i = 0; i < 8; i++)
+        desenha_cubos_enfileirados(8, 0.0, 0.0, (float)i * 0.2, 0.2, texID, EIXO_X);
+}
+
+void desenha_casa()
+{
+    //Desenha a parede da face x-y
+    desenha_parede(0.0, 0.0, 0.0, false); 
+    //Desenha a parede da face z-y
+    glPushMatrix();
+    glRotatef(-90, 0.0, 1.0, 0.0);
+    desenha_parede(0.0, 0.0, 0.0, false);
+    glPopMatrix();
+    //Desenha a parede da face x-y com z = 1.6 (parede da porta)
+    desenha_parede(0.0, 0.0, 1.6, true);
+    //Desenha parede da face z-y com x = -1.4
+    glPushMatrix();
+    glRotatef(-90, 0.0, 1.0, 0.0);
+    glTranslatef(0.0, 0.0, -1.4);
+    desenha_parede(0.0, 0.0, 0.0, false);
+    glPopMatrix();
+
+    //desenha o chão da casa
+    desenha_chao(0);
+
+    //Desenha as escadas
+    glPushMatrix();
+    glTranslatef(0.6, 0.0, 1.8);
+    escada(2, 0.0, 0.0, 0.0);
+    glTranslatef(0.2, 0.0, 0.0);
+    escada(2, 0.0,0.0,0.0);
+    glPopMatrix();
+
+    //Desenha as folhas na frente da casa
+    desenha_cubos_enfileirados(3, 0.0, 0.0, 1.8, 0.2, 4, EIXO_X);
+    desenha_cubos_enfileirados(3, 1.0, 0.0, 1.8, 0.2, 4, EIXO_X);
 }
 
 void display()
@@ -205,8 +274,11 @@ void display()
     //transform(1, 0.0, 0.2, 0.6);
     //for(int i = 0; i < 10; i++)
         //transform(1, i * 0.2, 0.0, 0.0);
-    escada(0, 0.0, 0.0, 0.0);
-    transform(0, 0.2, 0.0, 0.0);
+    // escada(1, 0.0, 0.0, 0.0);
+    // escada(1, 0.08, 0.0, 0.0);
+   // transform(0, 0.2, 0.0, 0.0);
+    
+    desenha_casa();
 
     glutSwapBuffers();
 }
