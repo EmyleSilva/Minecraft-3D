@@ -209,6 +209,75 @@ void desenha_chao(int texID)
         desenha_cubos_enfileirados(8, 0.0, 0.0, (float)i * 0.2, 0.2, texID, EIXO_X);
 }
 
+// void desenha_teto(int texID)
+// {
+//     for (int i = 0; i < 10; i++){
+//         glPushMatrix();
+//         glRotatef(180, 0.0, 1.0, 0.0);
+//         escada(texID, 0.0, 0.0, (float)i*0.2);
+//         glPopMatrix();
+//     }
+// }
+void desenha_lado_teto(int texID)
+{
+    for (int i = 0; i < 10; i++) {
+        glPushMatrix();
+        // Posiciona a escada
+        glTranslatef(0.0, 0.0, (float)i * 0.2);
+        // Rotaciona somente a escada
+        glRotatef(90, 0.0, 1.0, 0.0);
+        // Desenha a escada
+        escada(texID, 0.0, 0.0, 0.0);
+        glPopMatrix();
+    }
+    for (int i = 0; i < 10; i++) {
+        glPushMatrix();
+        // Posiciona a escada
+        glTranslatef(-0.2, 0.2, (float)i * 0.2);
+        // Rotaciona somente a escada
+        glRotatef(90, 0.0, 1.0, 0.0);
+        // Desenha a escada
+        escada(texID, 0.0, 0.0, 0.0);
+        glPopMatrix();
+    }
+     for (int i = 0; i < 10; i++) {
+        glPushMatrix();
+        // Posiciona a escada
+        glTranslatef(-0.4, 0.4, (float)i * 0.2);
+        // Rotaciona somente a escada
+        glRotatef(90, 0.0, 1.0, 0.0);
+        // Desenha a escada
+        escada(texID, 0.0, 0.0, 0.0);
+        glPopMatrix();
+    }
+     for (int i = 0; i < 10; i++) {
+        glPushMatrix();
+        // Posiciona a escada
+        glTranslatef(-0.6, 0.6, (float)i * 0.2);
+        // Rotaciona somente a escada
+        glRotatef(90, 0.0, 1.0, 0.0);
+        // Desenha a escada
+        escada(texID, 0.0, 0.0, 0.0);
+        glPopMatrix();
+    }
+}
+
+void desenha_teto(int texID)
+{
+    //Desenha lado direito do teto
+    glPushMatrix();
+    glTranslatef(2.0, 0.0, 0.0);
+    desenha_lado_teto(texID);   
+    glPopMatrix();
+
+    // Desenha lado esquerdo do teto (espelhado)
+    glPushMatrix();
+    glScalef(-1.0, 1.0, 1.0); // Espelha no eixo X
+    glTranslatef(-0.7, 0.0, 0.0); // Ajuste a posição espelhada
+    desenha_lado_teto(texID);   
+    glPopMatrix();
+}
+
 void desenha_casa()
 {
     //Desenha a parede da face x-y
@@ -240,7 +309,18 @@ void desenha_casa()
 
     //Desenha as folhas na frente da casa
     desenha_cubos_enfileirados(3, 0.0, 0.0, 1.8, 0.2, 4, EIXO_X);
-    desenha_cubos_enfileirados(3, 1.0, 0.0, 1.8, 0.2, 4, EIXO_X);
+    desenha_cubos_enfileirados(3, 1.0, 0.0, 1.8, 0.2, 4, EIXO_X);    
+
+    //Desenha a base do teto
+    for (int i = 0; i < 8; i++)
+        desenha_cubos_enfileirados(6, 0.2, 0.8, (float)i*0.2, 0.2, 1, EIXO_X);
+
+    //Desenha parte superior do teto
+    glPushMatrix();
+    glScalef(1.4, 1.0, 1.0);
+    glTranslatef(-0.85, 1.0, 0.0);
+    desenha_teto(2);
+    glPopMatrix();
 }
 
 void display()
@@ -279,7 +359,7 @@ void display()
    // transform(0, 0.2, 0.0, 0.0);
     
     desenha_casa();
-
+    // desenha_teto(1);
     glutSwapBuffers();
 }
 
@@ -304,6 +384,23 @@ void Teclado(unsigned char key, int x, int y) {
    glutPostRedisplay();
 }
 
+void Mouse(int botão, int estado, int x, int y)
+{
+    if (botão == GLUT_LEFT_BUTTON){
+        if (estado == GLUT_DOWN)
+        {
+            a[0] -= 0.2;
+        }
+    }
+    if (botão == GLUT_RIGHT_BUTTON){
+        if (estado == GLUT_DOWN)
+        {
+            a[0] += 0.2;
+        }
+    }
+    glutPostRedisplay();
+}
+
 int main(int argc, char** argv) {
    glutInit(&argc, argv);
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH );
@@ -316,6 +413,7 @@ int main(int argc, char** argv) {
    Iniciar();
    glutDisplayFunc(display);
    glutKeyboardFunc(Teclado);
+   glutMouseFunc(Mouse);
    glutMainLoop();
    return 0;
 }
