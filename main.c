@@ -52,15 +52,14 @@ void Iniciar() {
     load("img/madeira(lados).png", 2);
     load("img/vidro.png", 3);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0,largura/altura,1.0,20.0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(a[0], a[1], a[2], 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(45.0,largura/altura,1.0,20.0);
-    glEnable(GL_DEPTH_TEST);
-
+    
 }
 
 void desenha_cubo(int id)
@@ -179,9 +178,9 @@ void display()
     desenha_cubos_enfileirados(5, 0.0, 0.2 , 0.0 , 0.2f, 3, EIXO_X);
     desenha_cubos_enfileirados(5, 0.0, 0.4 , 0.0 , 0.2f, 1, EIXO_X);
 
-    transform(1, 0.0, 0.2, 0.6);
-
-
+    //transform(1, 0.0, 0.2, 0.6);
+    //for(int i = 0; i < 10; i++)
+        //transform(1, i * 0.2, 0.0, 0.0);
 
 
     glutSwapBuffers();
