@@ -132,6 +132,27 @@ void transform(int texID, float x, float y, float z)
     glPopMatrix(); 
 }
 
+void escada(int texID, float x, float y, float z){
+    glPushMatrix();
+    
+    // Desenha o cubo inferior (metade do tamanho)
+    glTranslatef(x, y-0.05, z);
+    glPushMatrix();
+    glScalef(1.0f, 0.5f, 1.0f);  // Escala para metade do tamanho no eixo Y
+    desenha_cubo(texID);
+    glPopMatrix();
+
+
+    // Desenha o cubo superior (1/4 do tamanho)
+    glTranslatef(0.0f, 0.1, -0.05f);  // Translação para cima, para o próximo cubo
+    glPushMatrix();
+    glScalef(1.0f, 0.5f, 0.5f);  // Escala para 1/4 do tamanho no eixo Y
+    desenha_cubo(texID);
+    glPopMatrix();
+
+    glPopMatrix();  // Restaura a transformação anterior
+}
+
 
 void desenha_cubos_enfileirados(int quantidade, float x, float y, float z, float distancia, int texID, int EIXO)
 {
@@ -158,6 +179,8 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Iniciar();
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     glBegin( GL_LINES ); //Eixos cartesianos
         glColor3f(0.0f,0.0f,1.0f);
@@ -173,15 +196,17 @@ void display()
     
     //transform(1, 0.4, 0, 0);
     //transform(1, 0.6, 0, 0);
+    //desenha_cubos_enfileirados(5, 0.0, 0.2 , 0.0 , 0.2f, 3, EIXO_X);
+    //glDisable(GL_BLEND);
 
-    desenha_cubos_enfileirados(5, 0.0, 0.0 , 0.0 , 0.2f, 0, EIXO_X);
-    desenha_cubos_enfileirados(5, 0.0, 0.2 , 0.0 , 0.2f, 3, EIXO_X);
-    desenha_cubos_enfileirados(5, 0.0, 0.4 , 0.0 , 0.2f, 1, EIXO_X);
+    //desenha_cubos_enfileirados(5, 0.0, 0.0 , 0.0 , 0.2f, 0, EIXO_X);
+    //desenha_cubos_enfileirados(5, 0.0, 0.4 , 0.0 , 0.2f, 1, EIXO_X);
 
     //transform(1, 0.0, 0.2, 0.6);
     //for(int i = 0; i < 10; i++)
         //transform(1, i * 0.2, 0.0, 0.0);
-
+    escada(0, 0.0, 0.0, 0.0);
+    transform(0, 0.2, 0.0, 0.0);
 
     glutSwapBuffers();
 }
@@ -213,7 +238,9 @@ int main(int argc, char** argv) {
    glutInitWindowSize(largura, altura);
    glutInitWindowPosition(50, 50);
    glutCreateWindow(argv[1]);
-   glClearColor(0.0, 0.0, 0.0, 0.0);
+   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Azul com transparência
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    Iniciar();
    glutDisplayFunc(display);
    glutKeyboardFunc(Teclado);
