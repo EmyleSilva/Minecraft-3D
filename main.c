@@ -11,9 +11,11 @@
 #define EIXO_Y 3
 #define EIXO_Z 4
 
+#define TAM 100
+
 int largura = 1024, altura = 1024;
 float a[3] = {2.0, 2.0, 6.0};
-GLint tex_id[5]; //Armazena os IDs de textura
+GLint tex_id[10]; //Armazena os IDs de textura
 
 /**
  * @brief Carrega uma textura
@@ -47,13 +49,15 @@ void load(const char *path, int texId)
 }
 
 void Iniciar() {
-    glGenTextures(4, tex_id); //Gera identificadores para as texturas 
+    glGenTextures(6, tex_id); //Gera identificadores para as texturas 
     //Carrega as texturas
     load("img/stone.jpg", 0);
     load("img/madeira.jpg", 1);
     load("img/madeira(lados).png", 2);
     load("img/vidro.png", 3);
     load("img/folha.png", 4);
+    load("img/grama.jpg", 5);
+    //load("img/folha_arvore.png", 6);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -323,6 +327,32 @@ void desenha_casa()
     glPopMatrix();
 }
 
+void desenha_arvore(float x, float y, float z){
+
+    glPushMatrix();
+        glTranslatef(x, y, z);
+        desenha_cubos_enfileirados(4, 0.0, 0.0, 0.0, 0.2, 2, EIXO_Y);
+        desenha_cubos_enfileirados(5, -0.4, 0.8, -0.2, 0.2, 4,  EIXO_X);
+        desenha_cubos_enfileirados(5, -0.4, 0.8, 0.0, 0.2, 4,  EIXO_X);
+        desenha_cubos_enfileirados(5, -0.4, 0.8, 0.2, 0.2, 4,  EIXO_X);
+
+        desenha_cubos_enfileirados(3, -0.2, 0.8, -0.4, 0.2, 4,  EIXO_X);
+        desenha_cubos_enfileirados(3, -0.2, 0.8, 0.4, 0.2, 4,  EIXO_X);
+
+        desenha_cubos_enfileirados(3, -0.2, 1.0, 0.2, 0.2, 4,  EIXO_X);
+        desenha_cubos_enfileirados(3, -0.2, 1.0, 0.0, 0.2, 4,  EIXO_X);
+        desenha_cubos_enfileirados(3, -0.2, 1.0, -0.2, 0.2, 4,  EIXO_X);
+
+        desenha_cubos_enfileirados(3, -0.2, 1.2, 0.0, 0.2, 4,  EIXO_X);
+        transform(4, 0.0, 1.2, 0.2);
+        transform(4, 0.0, 1.2, -0.2);
+
+        transform(4, 0.0, 1.4, 0.0);
+
+    glPopMatrix();
+
+}
+
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -360,6 +390,16 @@ void display()
     
     desenha_casa();
     // desenha_teto(1);
+
+
+
+    //desenha um mundo tam x tam
+    for(int i = 0; i <= TAM; i++)
+    desenha_cubos_enfileirados(TAM, -(TAM*0.2/2), -0.2, (i * 0.2) - (TAM*0.2/2), 0.2, 5, EIXO_X);
+
+    desenha_arvore(5, 0, -5);
+
+    
     glutSwapBuffers();
 }
 
@@ -407,8 +447,7 @@ int main(int argc, char** argv) {
    glutInitWindowSize(largura, altura);
    glutInitWindowPosition(50, 50);
    glutCreateWindow(argv[1]);
-   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Azul com transparência
-   glEnable(GL_BLEND);
+   glClearColor(0.5176f, 0.6588f, 0.9961f, 1.0f);   glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    Iniciar();
    glutDisplayFunc(display);
