@@ -57,7 +57,7 @@ void Iniciar() {
     load("img/vidro.png", 3);
     load("img/folha.png", 4);
     load("img/grama.jpg", 5);
-    //load("img/folha_arvore.png", 6);
+    load("img/agua.jpeg", 6);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -411,6 +411,25 @@ void display()
     desenha_cubos_enfileirados(TAM, -(TAM*0.2/2), -0.2, (i * 0.2) - (TAM*0.2/2), 0.2, 5, EIXO_X);
 
     desenha_arvore(5, 0, -5);
+    desenha_arvore(2, 0, -3);
+    desenha_arvore(-3, 0, -4);
+    desenha_arvore(-1, 0, -6);
+
+
+    //Desenha Piscina
+    glPushMatrix();
+        glTranslatef(0.2, 0, 0.2);
+        desenha_cubos_enfileirados(5, -2, 0, 0, 0.2, 1, EIXO_X);
+        desenha_cubos_enfileirados(5, -2.2, 0, 0.2, 0.2, 1, EIXO_Z);    
+        desenha_cubos_enfileirados(5, -1, 0, 0.2, 0.2, 1, EIXO_Z);
+        desenha_cubos_enfileirados(5, -2, 0, 1.2, 0.2, 1, EIXO_X);
+            for(int i = 1; i<=5; i++)
+            desenha_cubos_enfileirados(5, -2, 0, i * 0.2, 0.2, 6, EIXO_X);
+        transform(0, -2.2, 0, 0.0);
+        transform(0, -2.2, 0, 1.2);
+        transform(0, -1, 0, 0.0);
+        transform(0, -1, 0, 1.2);
+    glPopMatrix();
 
     
     glutSwapBuffers();
