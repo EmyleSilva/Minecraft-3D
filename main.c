@@ -222,6 +222,8 @@ void desenha_chao(int texID)
 //         glPopMatrix();
 //     }
 // }
+
+
 void desenha_lado_teto(int texID)
 {
     for (int i = 0; i < 10; i++) {
@@ -282,6 +284,7 @@ void desenha_teto(int texID)
     glPopMatrix();
 }
 
+
 void desenha_casa()
 {
     //Desenha a parede da face x-y
@@ -313,8 +316,18 @@ void desenha_casa()
 
     //Desenha as folhas na frente da casa
     desenha_cubos_enfileirados(3, 0.0, 0.0, 1.8, 0.2, 4, EIXO_X);
-    desenha_cubos_enfileirados(3, 1.0, 0.0, 1.8, 0.2, 4, EIXO_X);    
-
+    desenha_cubos_enfileirados(3, 1.0, 0.0, 1.8, 0.2, 4, EIXO_X);   
+    
+    // Desenha as paredes verticais completas do telhado
+    //Frente:
+    desenha_cubos_enfileirados(8, 0, 1, 1.6, 0.2, 1, EIXO_X);
+    desenha_cubos_enfileirados(6, 0.2, 1.2, 1.6, 0.2, 1, EIXO_X);
+    desenha_cubos_enfileirados(3, 0.5, 1.4, 1.6, 0.2, 1, EIXO_X);
+    //Fundo:
+    desenha_cubos_enfileirados(8, 0, 1, 0.01, 0.2, 1, EIXO_X);
+    desenha_cubos_enfileirados(6, 0.2, 1.2, 0.01, 0.2, 1, EIXO_X);
+    desenha_cubos_enfileirados(3, 0.5, 1.4, 0.01, 0.2, 1, EIXO_X);
+ 
     //Desenha a base do teto
     for (int i = 0; i < 8; i++)
         desenha_cubos_enfileirados(6, 0.2, 0.8, (float)i*0.2, 0.2, 1, EIXO_X);
@@ -322,7 +335,7 @@ void desenha_casa()
     //Desenha parte superior do teto
     glPushMatrix();
     glScalef(1.4, 1.0, 1.0);
-    glTranslatef(-0.85, 1.0, 0.0);
+    glTranslatef(-0.85, 1.002, -0.1);
     desenha_teto(2);
     glPopMatrix();
 }
