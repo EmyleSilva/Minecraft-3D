@@ -27,6 +27,7 @@ void load(const char *path, int texId)
 {
     //Carrega a textura
     int largura, altura, canal;
+    stbi_set_flip_vertically_on_load(true); //Carrega a imagem no sentido correto
     unsigned char *data = stbi_load(path, &largura, &altura, &canal, 0);
 
     if (!data)
@@ -34,7 +35,6 @@ void load(const char *path, int texId)
         printf("Erro ao carregar a textura.\n");
         exit(1);
     }
-
     glBindTexture(GL_TEXTURE_2D, tex_id[texId]); //Associa o ID ao tipo de textura 2D 
 
     //Envia a textura para o openGL (fica armazenada)
@@ -49,7 +49,7 @@ void load(const char *path, int texId)
 }
 
 void Iniciar() {
-    glGenTextures(6, tex_id); //Gera identificadores para as texturas 
+    glGenTextures(8, tex_id); //Gera identificadores para as texturas 
     //Carrega as texturas
     load("img/stone.jpg", 0);
     load("img/madeira.jpg", 1);
@@ -58,6 +58,7 @@ void Iniciar() {
     load("img/folha.png", 4);
     load("img/grama.jpg", 5);
     load("img/agua.jpeg", 6);
+    load("img/porta.jpg", 7);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -213,17 +214,6 @@ void desenha_chao(int texID)
         desenha_cubos_enfileirados(8, 0.0, 0.0, (float)i * 0.2, 0.2, texID, EIXO_X);
 }
 
-// void desenha_teto(int texID)
-// {
-//     for (int i = 0; i < 10; i++){
-//         glPushMatrix();
-//         glRotatef(180, 0.0, 1.0, 0.0);
-//         escada(texID, 0.0, 0.0, (float)i*0.2);
-//         glPopMatrix();
-//     }
-// }
-
-
 void desenha_lado_teto(int texID)
 {
     for (int i = 0; i < 10; i++) {
@@ -284,6 +274,28 @@ void desenha_teto(int texID)
     glPopMatrix();
 }
 
+void desenha_porta()
+{
+     // Habilita o uso de texturas
+    glEnable(GL_TEXTURE_2D);
+    // Vincula a textura
+    glBindTexture(GL_TEXTURE_2D, tex_id[7]);
+
+    // Define como a cor e a textura se comportam
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+    // Face y-x, com z = 0.1
+    glBegin(GL_QUADS); 
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.1f, -0.1f,  0.1f); // Inferior esquerdo
+        glTexCoord2f(1.0f, 0.0f); glVertex3f( 0.1f, -0.1f,  0.1f); // Inferior direito
+        glTexCoord2f(1.0f, 1.0f); glVertex3f( 0.1f,  0.3f,  0.1f); // Superior direito
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.1f,  0.3f,  0.1f); // Superior esquerdo
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0); // Desabilita o uso de texturas em outros objetos
+    glDisable(GL_TEXTURE_2D); 
+}
+
 
 void desenha_casa()
 {
@@ -296,6 +308,20 @@ void desenha_casa()
     glPopMatrix();
     //Desenha a parede da face x-y com z = 1.6 (parede da porta)
     desenha_parede(0.0, 0.0, 1.6, true);
+
+    //desenha a porta esquerda
+    glPushMatrix();
+    glTranslatef(0.6, 0.2, 1.6);
+    desenha_porta();
+    glPopMatrix();
+
+    //Desenha a porta direita
+    glPushMatrix();
+    glTranslatef(0.8, 0.2, 1.6);
+    glScalef(-1.0, 1.0, 1.0);
+    desenha_porta();
+    glPopMatrix();
+
     //Desenha parede da face z-y com x = -1.4
     glPushMatrix();
     glRotatef(-90, 0.0, 1.0, 0.0);
@@ -386,25 +412,7 @@ void display()
         glVertex3f(0.0f,0.0f,7.0f);
     glEnd();
     
-    //transform(1, 0.4, 0, 0);
-    //transform(1, 0.6, 0, 0);
-    //desenha_cubos_enfileirados(5, 0.0, 0.2 , 0.0 , 0.2f, 3, EIXO_X);
-    //glDisable(GL_BLEND);
-
-    //desenha_cubos_enfileirados(5, 0.0, 0.0 , 0.0 , 0.2f, 0, EIXO_X);
-    //desenha_cubos_enfileirados(5, 0.0, 0.4 , 0.0 , 0.2f, 1, EIXO_X);
-
-    //transform(1, 0.0, 0.2, 0.6);
-    //for(int i = 0; i < 10; i++)
-        //transform(1, i * 0.2, 0.0, 0.0);
-    // escada(1, 0.0, 0.0, 0.0);
-    // escada(1, 0.08, 0.0, 0.0);
-   // transform(0, 0.2, 0.0, 0.0);
-    
     desenha_casa();
-    // desenha_teto(1);
-
-
 
     //desenha um mundo tam x tam
     for(int i = 0; i <= TAM; i++)
