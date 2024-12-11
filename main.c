@@ -392,6 +392,16 @@ void desenha_arvore(float x, float y, float z){
 
 }
 
+float m[]={4.0,0,4.0, 0.0, 0.0}; 
+void atualizaCamera(void){
+    float radian = m[5] * 3.14159f / 180.0f;
+    float eyeX = m[0] * sin(radian);
+    float eyeZ = m[0] * cos(radian);
+    gluLookAt(eyeX, m[1], eyeZ, 
+            0.0, 0.0, 0.0, 
+            0.0, 1, 0.0);
+}
+
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -400,18 +410,24 @@ void display()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    glBegin( GL_LINES ); //Eixos cartesianos
-        glColor3f(0.0f,0.0f,1.0f);
-        glVertex3f(0.0f,0.0f,0.0f);
-        glVertex3f(7.0f,0.0f,0.0f);
-        glColor3f(1.0f,0.0f,0.0f);
-        glVertex3f(0.0f,0.0f,0.0f);
-        glVertex3f(0.0f,7.0f,0.0f);
-        glColor3f(0.0f,1.0f,0.0f);
-        glVertex3f(0.0f,0.0f,0.0f);
-        glVertex3f(0.0f,0.0f,7.0f);
-    glEnd();
-    
+    glPushMatrix();
+        glTranslatef(-0.1, 0, -4);  // pra ficar na posicao da casa
+
+        glBegin(GL_LINES); // Eixos cartesianos
+            glColor3f(0.0f, 0.0f, 1.0f); // Eixo X (azul)
+            glVertex3f(0.0f, 0.0f, 0.0f);
+            glVertex3f(7.0f, 0.0f, 0.0f);
+            glColor3f(1.0f, 0.0f, 0.0f); // Eixo Y (vermelho)
+            glVertex3f(0.0f, 0.0f, 0.0f);
+            glVertex3f(0.0f, 7.0f, 0.0f);
+            glColor3f(0.0f, 1.0f, 0.0f); // Eixo Z (verde)
+            glVertex3f(0.0f, 0.0f, 0.0f);
+            glVertex3f(0.0f, 0.0f, 7.0f);
+        glEnd();
+
+    glPopMatrix();
+
+    atualizaCamera();
     desenha_casa();
 
     //desenha um mundo tam x tam
@@ -464,21 +480,19 @@ void Teclado(unsigned char key, int x, int y) {
    glutPostRedisplay();
 }
 
-void Mouse(int botão, int estado, int x, int y)
-{
-    if (botão == GLUT_LEFT_BUTTON){
-        if (estado == GLUT_DOWN)
-        {
-            a[0] -= 0.2;
+
+void mouse(int butt, int estado, int x, int y) {
+    if (estado == GLUT_DOWN) {
+        if (butt == GLUT_LEFT_BUTTON) {
+            m[5] -= 10.0f; 
+        } else if (butt == GLUT_RIGHT_BUTTON) {
+            m[5] += 10.0f; 
         }
+        if (m[5] >= 360.0f) m[5] -= 360.0f;
+        if (m[5] < 0.0f) m[5] += 360.0f;
+        glutPostRedisplay();
     }
-    if (botão == GLUT_RIGHT_BUTTON){
-        if (estado == GLUT_DOWN)
-        {
-            a[0] += 0.2;
-        }
-    }
-    glutPostRedisplay();
+    
 }
 
 int main(int argc, char** argv) {
@@ -492,7 +506,7 @@ int main(int argc, char** argv) {
    Iniciar();
    glutDisplayFunc(display);
    glutKeyboardFunc(Teclado);
-   glutMouseFunc(Mouse);
+   glutMouseFunc(mouse);
    glutMainLoop();
    return 0;
 }
