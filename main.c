@@ -161,6 +161,15 @@ void escada(int texID, float x, float y, float z){
     glPopMatrix();  // Restaura a transformação anterior
 }
 
+/**
+ * @param quantidade Quantos cubos vão ser desenhados
+ * @param x posição inical x do primeiro cubo
+ * @param y posição inical y do primeiro cubo
+ * @param z posição inical z do primeiro cubo
+ * @param distancia distancia entre os cubos (para não sobrepor)
+ * @param texID id da textura
+ * @param EIXO em qual eixo os cubos devem ser enfileirados
+ */
 void desenha_cubos_enfileirados(int quantidade, float x, float y, float z, float distancia, int texID, int EIXO)
 {
     if (EIXO == EIXO_X){
